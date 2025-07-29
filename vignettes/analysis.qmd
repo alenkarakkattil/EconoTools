@@ -1,0 +1,94 @@
+---
+title: "Using EconoTools for Economic Analysis"
+author: "Your Name"
+date: last-modified
+format:
+  html:
+    toc: true
+    theme: flatly
+    code-fold: true
+vignette: >
+  %\VignetteIndexEntry{Using EconoTools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+This document demonstrates the core functionality of the `EconoTools` package. We will fetch, analyze, and visualize US Gross Domestic Product (GDP) data to showcase the package's utility.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(EconoTools)
+library(ggplot2)
+library(plotly)
+```
+
+**Note:** To run this analysis, you must have a FRED API key. It is recommended to store it as an environment variable called `FRED_API_KEY`.
+
+```{r}
+# You can set your key like this for the session if it's not stored
+# Sys.setenv(FRED_API_KEY = "your_key_here")
+api_key <- Sys.getenv("FRED_API_KEY")
+```
+
+## 1. Data Acquisition
+
+First, we use the `fetch_fred_data()` function to retrieve quarterly US GDP data (series ID: "GDP").
+
+```{r fetch-data}
+if (api_key != "") {
+  gdp_data <- fetch_fred_data("GDP", api_key = api_key)
+  knitr::kable(head(gdp_data), caption = "First 6 Rows of US GDP Data")
+} else {
+  print("FRED_API_KEY not set. Skipping data fetch.")
+  gdp_data <- NULL
+}
+```
+
+## 2. Analysis: Calculating a Moving Average
+
+Next, we use `calculate_sma()` to compute the 10-year (40-quarter) simple moving average. This helps to smooth out short-term fluctuations and highlight the long-term trend.
+
+```{r calculate-sma}
+if (!is.null(gdp_data)) {
+  gdp_data_sma <- calculate_sma(gdp_data, n = 40)
+  knitr::kable(tail(gdp_data_sma), caption = "Last 6 Rows with 40-Quarter SMA")
+}
+```
+
+## 3. Data Visualization
+
+A key part of analysis is effective visualization.
+
+### Static Plot with `ggplot2`
+
+Here is a static plot showing the raw GDP data alongside its 10-year moving average.
+
+```{r static-plot}
+if (!is.null(gdp_data)) {
+  p_static <- ggplot(gdp_data_sma, aes(x = date)) +
+    geom_line(aes(y = value), color = "grey70") +
+    geom_line(aes(y = sma), color = "firebrick", size = 1.2) +
+    labs(
+      title = "US GDP and 10-Year Moving Average",
+      subtitle = "Quarterly data, in Billions of Dollars",
+      y = "Billions of Dollars",
+      x = "Date",
+      caption = "Source: FRED"
+    ) +
+    theme_minimal(base_size = 14)
+  
+  print(p_static)
+}
+```
+
+### Interactive Plot with `plotly`
+
+For a more engaging experience, we can easily convert our `ggplot` object into an interactive chart using `plotly`. Hover over the lines to see the data points.
+
+```{r interactive-plot}
+if (!is.null(gdp_data)) {
+  ggplotly(p_static)
+}
+```
