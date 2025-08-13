@@ -86,7 +86,7 @@ server <- function(input, output, session) {
       add_lines(y = ~value, name = "Original Data", color = I("#2c3e50"), 
                 text = paste("Date:", plot_data$date, "Value:", plot_data$value), hoverinfo = "text") |>
       add_lines(y = ~sma, name = paste0(isolate(input$sma_n), "-Period SMA"), 
-                color = I("#e74c3c"), linewidth = 1,
+                color = I("#e74c3c"), line = list(width = 1),
                 text = paste("Date:", plot_data$date, "SMA:", round(plot_data$sma, 2)), hoverinfo = "text") |>
       layout(
         title = paste(isolate(input$series), "and", isolate(input$sma_n), "-Period SMA"),
