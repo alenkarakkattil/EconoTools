@@ -1,0 +1,71 @@
+---
+title: "Economic Data Analysis Report"
+author: "Alen K Suresh"
+date: "20-07-2025"
+format: html
+---
+
+## Introduction
+
+This report provides an overview of key U.S. macroeconomic indicators, including Gross Domestic Product (GDP) and the Unemployment Rate (UNRATE). The data is fetched directly from the Federal Reserve Economic Data (FRED) API and analyzed using the Simple Moving Average (SMA) to highlight trends.
+
+To generate this report, you will need to replace the placeholder `YOUR_API_KEY_HERE` with your personal FRED API key.
+
+***
+
+## Gross Domestic Product (GDP) Analysis
+
+The following chart displays the U.S. GDP data along with a 40-period SMA to visualize the long-term trend in economic output.
+
+```{r}
+# Load necessary libraries from your EconoTools package
+library(EconoTools)
+library(plotly)
+
+# Retrieve API key securely from environment
+api_key <- Sys.getenv("FRED_API_KEY")
+
+if (api_key == "") {
+    stop("FRED API key not found. Please set it in your .Renviron file as FRED_API_KEY.")
+}
+
+# Fetch GDP data
+gdp_data <- fetch_fred_data("GDP", api_key = api_key)
+
+# Calculate a 40-period Simple Moving Average
+gdp_sma <- calculate_sma(gdp_data, n = 40)
+
+# Create an interactive plot
+p_gdp <- plot_ly(gdp_sma, x = ~date) |>
+    add_lines(y = ~value, name = "Original Data", color = I("#2c3e50")) |>
+    add_lines(y = ~sma, name = "40-Period SMA", color = I("#e74c3c"), line = list(width = 1)) |>
+    layout(
+        title = "US GDP and 40-Period SMA",
+        xaxis = list(title = "Date"),
+        yaxis = list(title = "Value")
+    )
+
+p_gdp
+```
+
+## Unemployment Rate (UNRATE) Analysis
+
+```{r}
+# Fetch Unemployment Rate data
+unrate_data <- fetch_fred_data("UNRATE", api_key = api_key)
+
+# Calculate a 12-period Simple Moving Average
+unrate_sma <- calculate_sma(unrate_data, n = 12)
+
+# Create an interactive plot
+p_unrate <- plot_ly(unrate_sma, x = ~date) |>
+    add_lines(y = ~value, name = "Unemployment Rate", color = I("#2c3e50")) |>
+    add_lines(y = ~sma, name = "12-Period SMA", color = I("#e74c3c"), line = list(width = 1)) |>
+    layout(
+        title = "US Unemployment Rate and 12-Period SMA",
+        xaxis = list(title = "Date"),
+        yaxis = list(title = "Percent (%)")
+    )
+
+p_unrate
+```
