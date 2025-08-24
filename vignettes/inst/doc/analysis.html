@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Alen K Suresh">
+<meta name="dcterms.date" content="2025-12-08">
+
+<title>Using EconoTools for Economic Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="analysis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="analysis_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="analysis_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="analysis_files/libs/quarto-html/popper.min.js"></script>
+<script src="analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="analysis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="analysis_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="analysis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="analysis_files/libs/bootstrap/bootstrap-6e5ff12f349f7d7ee99023e5a7f49be9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="analysis_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="analysis_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="analysis_files/libs/plotly-binding-4.11.0/plotly.js"></script>
+
+<script src="analysis_files/libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="analysis_files/libs/jquery-3.5.1/jquery.min.js"></script>
+
+<link href="analysis_files/libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="analysis_files/libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
+<link href="analysis_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="analysis_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition">1. Data Acquisition</a></li>
+  <li><a href="#analysis-calculating-a-moving-average" id="toc-analysis-calculating-a-moving-average" class="nav-link" data-scroll-target="#analysis-calculating-a-moving-average">2. Analysis: Calculating a Moving Average</a></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">3. Data Visualization</a>
+  <ul class="collapse">
+  <li><a href="#static-plot-with-ggplot2" id="toc-static-plot-with-ggplot2" class="nav-link" data-scroll-target="#static-plot-with-ggplot2">Static Plot with <code>ggplot2</code></a></li>
+  <li><a href="#interactive-plot-with-plotly" id="toc-interactive-plot-with-plotly" class="nav-link" data-scroll-target="#interactive-plot-with-plotly">Interactive Plot with <code>plotly</code></a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Using EconoTools for Economic Analysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Alen K Suresh </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 8, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This document demonstrates the core functionality of the <code>EconoTools</code> package. We will fetch, analyze, and visualize US Gross Domestic Product (GDP) data to showcase the package’s utility.</p>
+<p><strong>Note:</strong> To run this analysis, you must have a FRED API key. It is recommended to store it as an environment variable called <code>FRED_API_KEY</code>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># You can set your key like this for the session if it's not stored</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Sys.setenv(FRED_API_KEY = "your_key_here")</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"FRED_API_KEY"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="data-acquisition" class="level2">
+<h2 class="anchored" data-anchor-id="data-acquisition">1. Data Acquisition</h2>
+<p>First, we use the <code>fetch_fred_data()</code> function to retrieve quarterly US GDP data (series ID: “GDP”).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (api_key <span class="sc">!=</span> <span class="st">""</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  gdp_data <span class="ot">&lt;-</span> <span class="fu">fetch_fred_data</span>(<span class="st">"GDP"</span>, <span class="at">api_key =</span> api_key)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(gdp_data), <span class="at">caption =</span> <span class="st">"First 6 Rows of US GDP Data"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"FRED_API_KEY not set. Skipping data fetch."</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  gdp_data <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>First 6 Rows of US GDP Data</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">date</th>
+<th style="text-align: right;">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1947-01-01</td>
+<td style="text-align: right;">243.164</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1947-04-01</td>
+<td style="text-align: right;">245.968</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1947-07-01</td>
+<td style="text-align: right;">249.585</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1947-10-01</td>
+<td style="text-align: right;">259.745</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1948-01-01</td>
+<td style="text-align: right;">265.742</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1948-04-01</td>
+<td style="text-align: right;">272.567</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="analysis-calculating-a-moving-average" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-calculating-a-moving-average">2. Analysis: Calculating a Moving Average</h2>
+<p>Next, we use <code>calculate_sma()</code> to compute the 10-year (40-quarter) simple moving average. This helps to smooth out short-term fluctuations and highlight the long-term trend.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(gdp_data)) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  gdp_data_sma <span class="ot">&lt;-</span> <span class="fu">calculate_sma</span>(gdp_data, <span class="at">n =</span> <span class="dv">40</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">tail</span>(gdp_data_sma), <span class="at">caption =</span> <span class="st">"Last 6 Rows with 40-Quarter SMA"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Last 6 Rows with 40-Quarter SMA</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">date</th>
+<th style="text-align: right;">value</th>
+<th style="text-align: right;">sma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2024-01-01</td>
+<td style="text-align: right;">28624.07</td>
+<td style="text-align: right;">21813.61</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-04-01</td>
+<td style="text-align: right;">29016.71</td>
+<td style="text-align: right;">22101.07</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-07-01</td>
+<td style="text-align: right;">29374.91</td>
+<td style="text-align: right;">22390.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-10-01</td>
+<td style="text-align: right;">29723.86</td>
+<td style="text-align: right;">22685.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2025-01-01</td>
+<td style="text-align: right;">29962.05</td>
+<td style="text-align: right;">22983.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2025-04-01</td>
+<td style="text-align: right;">30331.12</td>
+<td style="text-align: right;">23284.38</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="data-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="data-visualization">3. Data Visualization</h2>
+<p>A key part of analysis is effective visualization.</p>
+<section id="static-plot-with-ggplot2" class="level3">
+<h3 class="anchored" data-anchor-id="static-plot-with-ggplot2">Static Plot with <code>ggplot2</code></h3>
+<p>Here is a static plot showing the raw GDP data alongside its 10-year moving average.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(gdp_data)) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  p_static <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(gdp_data_sma, <span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> value), <span class="at">color =</span> <span class="st">"grey70"</span>) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sma), <span class="at">color =</span> <span class="st">"firebrick"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"US GDP and 10-Year Moving Average"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"Quarterly data, in Billions of Dollars"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Billions of Dollars"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"Date"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Source: FRED"</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p_static)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/static-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interactive-plot-with-plotly" class="level3">
+<h3 class="anchored" data-anchor-id="interactive-plot-with-plotly">Interactive Plot with <code>plotly</code></h3>
+<p>For a more engaging experience, we can easily convert our <code>ggplot</code> object into an interactive chart using <code>plotly</code>. Hover over the lines to see the data points.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(gdp_data)) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplotly</span>(p_static)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-ddb12a0278c12f989bb8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-ddb12a0278c12f989bb8">{"x":{"data":[{"x":[-8401,-8311,-8220,-8128,-8036,-7945,-7854,-7762,-7670,-7580,-7489,-7397,-7305,-7215,-7124,-7032,-6940,-6850,-6759,-6667,-6575,-6484,-6393,-6301,-6209,-6119,-6028,-5936,-5844,-5754,-5663,-5571,-5479,-5389,-5298,-5206,-5114,-5023,-4932,-4840,-4748,-4658,-4567,-4475,-4383,-4293,-4202,-4110,-4018,-3928,-3837,-3745,-3653,-3562,-3471,-3379,-3287,-3197,-3106,-3014,-2922,-2832,-2741,-2649,-2557,-2467,-2376,-2284,-2192,-2101,-2010,-1918,-1826,-1736,-1645,-1553,-1461,-1371,-1280,-1188,-1096,-1006,-915,-823,-731,-640,-549,-457,-365,-275,-184,-92,0,90,181,273,365,455,546,638,730,821,912,1004,1096,1186,1277,1369,1461,1551,1642,1734,1826,1916,2007,2099,2191,2282,2373,2465,2557,2647,2738,2830,2922,3012,3103,3195,3287,3377,3468,3560,3652,3743,3834,3926,4018,4108,4199,4291,4383,4473,4564,4656,4748,4838,4929,5021,5113,5204,5295,5387,5479,5569,5660,5752,5844,5934,6025,6117,6209,6299,6390,6482,6574,6665,6756,6848,6940,7030,7121,7213,7305,7395,7486,7578,7670,7760,7851,7943,8035,8126,8217,8309,8401,8491,8582,8674,8766,8856,8947,9039,9131,9221,9312,9404,9496,9587,9678,9770,9862,9952,10043,10135,10227,10317,10408,10500,10592,10682,10773,10865,10957,11048,11139,11231,11323,11413,11504,11596,11688,11778,11869,11961,12053,12143,12234,12326,12418,12509,12600,12692,12784,12874,12965,13057,13149,13239,13330,13422,13514,13604,13695,13787,13879,13970,14061,14153,14245,14335,14426,14518,14610,14700,14791,14883,14975,15065,15156,15248,15340,15431,15522,15614,15706,15796,15887,15979,16071,16161,16252,16344,16436,16526,16617,16709,16801,16892,16983,17075,17167,17257,17348,17440,17532,17622,17713,17805,17897,17987,18078,18170,18262,18353,18444,18536,18628,18718,18809,18901,18993,19083,19174,19266,19358,19448,19539,19631,19723,19814,19905,19997,20089,20179],"y":[243.16399999999999,245.96799999999999,249.58500000000001,259.745,265.74200000000002,272.56700000000001,279.19600000000003,280.36599999999999,275.03399999999999,271.351,272.88900000000001,270.62700000000001,280.82799999999997,290.38299999999998,308.15300000000002,319.94499999999999,336,344.08999999999997,351.38499999999999,356.178,359.81999999999999,361.02999999999997,367.70100000000002,380.81200000000001,387.98000000000002,391.74900000000002,391.17099999999999,385.97000000000003,385.34500000000003,386.12099999999998,390.99599999999998,399.73399999999998,413.07299999999998,421.53199999999998,430.221,437.09199999999998,439.74599999999998,446.00999999999999,451.19099999999997,460.46300000000002,469.779,472.02499999999998,479.49000000000001,474.86399999999998,467.54000000000002,471.97800000000001,485.84100000000001,499.55500000000001,510.32999999999998,522.65300000000002,525.03399999999999,528.60000000000002,542.64800000000002,541.08000000000004,545.60400000000004,540.197,545.01800000000003,555.54499999999996,567.66399999999999,580.61199999999997,594.01300000000003,600.36599999999999,609.02700000000004,612.27999999999997,621.67200000000003,629.75199999999995,644.44399999999996,653.93799999999999,669.822,678.67399999999998,692.03099999999995,697.31899999999996,717.78999999999996,730.19100000000003,749.32299999999998,771.85699999999997,795.73400000000004,804.98099999999999,819.63800000000003,833.30200000000002,844.16999999999996,848.98299999999995,865.23299999999995,881.43899999999996,909.38699999999994,934.34400000000005,950.82500000000005,968.02999999999997,993.33699999999999,1009.02,1029.9559999999999,1038.1469999999999,1051.2,1067.375,1086.059,1088.6079999999999,1135.1559999999999,1156.271,1177.675,1190.297,1230.6089999999999,1266.3689999999999,1290.566,1328.904,1377.49,1413.8869999999999,1433.838,1476.289,1491.2090000000001,1530.056,1560.0260000000001,1599.6790000000001,1616.116,1651.8530000000001,1709.8199999999999,1761.8309999999999,1820.4870000000001,1852.3320000000001,1886.558,1934.2729999999999,1988.6479999999999,2055.9090000000001,2118.473,2164.27,2202.7600000000002,2331.6329999999998,2395.0529999999999,2476.9490000000001,2526.6100000000001,2591.2469999999998,2667.5650000000001,2723.8829999999998,2789.8420000000001,2797.3519999999999,2856.4830000000002,2985.5569999999998,3124.2060000000001,3162.5320000000002,3260.6089999999999,3280.8180000000002,3274.3020000000001,3331.9720000000002,3366.3220000000001,3402.5610000000001,3473.413,3578.848,3689.1790000000001,3794.7060000000001,3908.0540000000001,4009.6010000000001,4084.25,4148.5510000000004,4230.1679999999997,4294.8869999999997,4386.7730000000001,4444.0940000000001,4507.8940000000002,4545.3400000000001,4607.6689999999999,4657.6270000000004,4722.1559999999999,4806.1599999999999,4884.5550000000003,5007.9939999999997,5073.3720000000003,5190.0360000000001,5282.835,5399.509,5511.2529999999997,5612.4629999999997,5695.3649999999998,5747.2370000000001,5872.701,5960.0280000000002,6015.116,6004.7330000000002,6035.1779999999999,6126.8620000000001,6205.9369999999999,6264.54,6363.1019999999999,6470.7629999999999,6566.6409999999996,6680.8029999999999,6729.4589999999998,6808.9390000000003,6882.098,7013.7380000000003,7115.652,7246.9309999999996,7331.0749999999998,7455.2879999999996,7522.2889999999998,7580.9970000000003,7683.125,7772.5860000000002,7868.4679999999998,8032.8400000000001,8131.4080000000004,8259.7710000000006,8362.6550000000007,8518.8250000000007,8662.8230000000003,8765.9069999999992,8866.4799999999996,8969.6990000000005,9121.0969999999998,9293.991,9411.6820000000007,9526.2099999999991,9686.6260000000002,9900.1689999999999,10002.179,10247.719999999999,10318.165000000001,10435.744000000001,10470.231,10599,10598.02,10660.465,10783.5,10887.459999999999,10984.040000000001,11061.433000000001,11174.129000000001,11312.766,11566.669,11772.234,11923.447,12112.815000000001,12305.307000000001,12527.214,12767.286,12922.656000000001,13142.642,13324.204,13599.16,13753.424000000001,13870.188,14039.559999999999,14215.651,14402.082,14564.117,14715.058000000001,14706.538,14865.700999999999,14898.999,14608.209000000001,14430.902,14381.236000000001,14448.882,14651.249,14764.610000000001,14980.192999999999,15141.607,15309.474,15351.448,15557.539000000001,15647.68,15842.259,16068.805,16207.115,16319.540999999999,16420.419000000002,16648.188999999998,16728.687000000002,16953.838,17192.019,17197.738000000001,17518.508000000002,17804.227999999999,17912.079000000002,18063.528999999999,18279.784,18401.626,18435.136999999999,18525.933000000001,18711.702000000001,18892.638999999999,19089.379000000001,19280.083999999999,19438.643,19692.595000000001,20037.088,20328.553,20580.912,20798.73,20917.866999999998,21111.599999999999,21397.937999999998,21717.170999999998,21933.217000000001,21727.656999999999,19935.444,21684.550999999999,22068.767,22656.793000000001,23368.861000000001,23921.991000000002,24777.038,25215.491000000002,25805.791000000001,26272.010999999999,26734.276999999998,27164.359,27453.814999999999,27967.697,28296.967000000001,28624.069,29016.714,29374.914000000001,29723.864000000001,29962.046999999999,30331.116999999998],"text":["date: 1947-01-01<br />value:   243.164","date: 1947-04-01<br />value:   245.968","date: 1947-07-01<br />value:   249.585","date: 1947-10-01<br />value:   259.745","date: 1948-01-01<br />value:   265.742","date: 1948-04-01<br />value:   272.567","date: 1948-07-01<br />value:   279.196","date: 1948-10-01<br />value:   280.366","date: 1949-01-01<br />value:   275.034","date: 1949-04-01<br />value:   271.351","date: 1949-07-01<br />value:   272.889","date: 1949-10-01<br />value:   270.627","date: 1950-01-01<br />value:   280.828","date: 1950-04-01<br />value:   290.383","date: 1950-07-01<br />value:   308.153","date: 1950-10-01<br />value:   319.945","date: 1951-01-01<br />value:   336.000","date: 1951-04-01<br />value:   344.090","date: 1951-07-01<br />value:   351.385","date: 1951-10-01<br />value:   356.178","date: 1952-01-01<br />value:   359.820","date: 1952-04-01<br />value:   361.030","date: 1952-07-01<br />value:   367.701","date: 1952-10-01<br />value:   380.812","date: 1953-01-01<br />value:   387.980","date: 1953-04-01<br />value:   391.749","date: 1953-07-01<br />value:   391.171","date: 1953-10-01<br />value:   385.970","date: 1954-01-01<br />value:   385.345","date: 1954-04-01<br />value:   386.121","date: 1954-07-01<br />value:   390.996","date: 1954-10-01<br />value:   399.734","date: 1955-01-01<br />value:   413.073","date: 1955-04-01<br />value:   421.532","date: 1955-07-01<br />value:   430.221","date: 1955-10-01<br />value:   437.092","date: 1956-01-01<br />value:   439.746","date: 1956-04-01<br />value:   446.010","date: 1956-07-01<br />value:   451.191","date: 1956-10-01<br />value:   460.463","date: 1957-01-01<br />value:   469.779","date: 1957-04-01<br />value:   472.025","date: 1957-07-01<br />value:   479.490","date: 1957-10-01<br />value:   474.864","date: 1958-01-01<br />value:   467.540","date: 1958-04-01<br />value:   471.978","date: 1958-07-01<br />value:   485.841","date: 1958-10-01<br />value:   499.555","date: 1959-01-01<br />value:   510.330","date: 1959-04-01<br />value:   522.653","date: 1959-07-01<br />value:   525.034","date: 1959-10-01<br />value:   528.600","date: 1960-01-01<br />value:   542.648","date: 1960-04-01<br />value:   541.080","date: 1960-07-01<br />value:   545.604","date: 1960-10-01<br />value:   540.197","date: 1961-01-01<br />value:   545.018","date: 1961-04-01<br />value:   555.545","date: 1961-07-01<br />value:   567.664","date: 1961-10-01<br />value:   580.612","date: 1962-01-01<br />value:   594.013","date: 1962-04-01<br />value:   600.366","date: 1962-07-01<br />value:   609.027","date: 1962-10-01<br />value:   612.280","date: 1963-01-01<br />value:   621.672","date: 1963-04-01<br />value:   629.752","date: 1963-07-01<br />value:   644.444","date: 1963-10-01<br />value:   653.938","date: 1964-01-01<br />value:   669.822","date: 1964-04-01<br />value:   678.674","date: 1964-07-01<br />value:   692.031","date: 1964-10-01<br />value:   697.319","date: 1965-01-01<br />value:   717.790","date: 1965-04-01<br />value:   730.191","date: 1965-07-01<br />value:   749.323","date: 1965-10-01<br />value:   771.857","date: 1966-01-01<br />value:   795.734","date: 1966-04-01<br />value:   804.981","date: 1966-07-01<br />value:   819.638","date: 1966-10-01<br />value:   833.302","date: 1967-01-01<br />value:   844.170","date: 1967-04-01<br />value:   848.983","date: 1967-07-01<br />value:   865.233","date: 1967-10-01<br />value:   881.439","date: 1968-01-01<br />value:   909.387","date: 1968-04-01<br />value:   934.344","date: 1968-07-01<br />value:   950.825","date: 1968-10-01<br />value:   968.030","date: 1969-01-01<br />value:   993.337","date: 1969-04-01<br />value:  1009.020","date: 1969-07-01<br />value:  1029.956","date: 1969-10-01<br />value:  1038.147","date: 1970-01-01<br />value:  1051.200","date: 1970-04-01<br />value:  1067.375","date: 1970-07-01<br />value:  1086.059","date: 1970-10-01<br />value:  1088.608","date: 1971-01-01<br />value:  1135.156","date: 1971-04-01<br />value:  1156.271","date: 1971-07-01<br />value:  1177.675","date: 1971-10-01<br />value:  1190.297","date: 1972-01-01<br />value:  1230.609","date: 1972-04-01<br />value:  1266.369","date: 1972-07-01<br />value:  1290.566","date: 1972-10-01<br />value:  1328.904","date: 1973-01-01<br />value:  1377.490","date: 1973-04-01<br />value:  1413.887","date: 1973-07-01<br />value:  1433.838","date: 1973-10-01<br />value:  1476.289","date: 1974-01-01<br />value:  1491.209","date: 1974-04-01<br />value:  1530.056","date: 1974-07-01<br />value:  1560.026","date: 1974-10-01<br />value:  1599.679","date: 1975-01-01<br />value:  1616.116","date: 1975-04-01<br />value:  1651.853","date: 1975-07-01<br />value:  1709.820","date: 1975-10-01<br />value:  1761.831","date: 1976-01-01<br />value:  1820.487","date: 1976-04-01<br />value:  1852.332","date: 1976-07-01<br />value:  1886.558","date: 1976-10-01<br />value:  1934.273","date: 1977-01-01<br />value:  1988.648","date: 1977-04-01<br />value:  2055.909","date: 1977-07-01<br />value:  2118.473","date: 1977-10-01<br />value:  2164.270","date: 1978-01-01<br />value:  2202.760","date: 1978-04-01<br />value:  2331.633","date: 1978-07-01<br />value:  2395.053","date: 1978-10-01<br />value:  2476.949","date: 1979-01-01<br />value:  2526.610","date: 1979-04-01<br />value:  2591.247","date: 1979-07-01<br />value:  2667.565","date: 1979-10-01<br />value:  2723.883","date: 1980-01-01<br />value:  2789.842","date: 1980-04-01<br />value:  2797.352","date: 1980-07-01<br />value:  2856.483","date: 1980-10-01<br />value:  2985.557","date: 1981-01-01<br />value:  3124.206","date: 1981-04-01<br />value:  3162.532","date: 1981-07-01<br />value:  3260.609","date: 1981-10-01<br />value:  3280.818","date: 1982-01-01<br />value:  3274.302","date: 1982-04-01<br />value:  3331.972","date: 1982-07-01<br />value:  3366.322","date: 1982-10-01<br />value:  3402.561","date: 1983-01-01<br />value:  3473.413","date: 1983-04-01<br />value:  3578.848","date: 1983-07-01<br />value:  3689.179","date: 1983-10-01<br />value:  3794.706","date: 1984-01-01<br />value:  3908.054","date: 1984-04-01<br />value:  4009.601","date: 1984-07-01<br />value:  4084.250","date: 1984-10-01<br />value:  4148.551","date: 1985-01-01<br />value:  4230.168","date: 1985-04-01<br />value:  4294.887","date: 1985-07-01<br />value:  4386.773","date: 1985-10-01<br />value:  4444.094","date: 1986-01-01<br />value:  4507.894","date: 1986-04-01<br />value:  4545.340","date: 1986-07-01<br />value:  4607.669","date: 1986-10-01<br />value:  4657.627","date: 1987-01-01<br />value:  4722.156","date: 1987-04-01<br />value:  4806.160","date: 1987-07-01<br />value:  4884.555","date: 1987-10-01<br />value:  5007.994","date: 1988-01-01<br />value:  5073.372","date: 1988-04-01<br />value:  5190.036","date: 1988-07-01<br />value:  5282.835","date: 1988-10-01<br />value:  5399.509","date: 1989-01-01<br />value:  5511.253","date: 1989-04-01<br />value:  5612.463","date: 1989-07-01<br />value:  5695.365","date: 1989-10-01<br />value:  5747.237","date: 1990-01-01<br />value:  5872.701","date: 1990-04-01<br />value:  5960.028","date: 1990-07-01<br />value:  6015.116","date: 1990-10-01<br />value:  6004.733","date: 1991-01-01<br />value:  6035.178","date: 1991-04-01<br />value:  6126.862","date: 1991-07-01<br />value:  6205.937","date: 1991-10-01<br />value:  6264.540","date: 1992-01-01<br />value:  6363.102","date: 1992-04-01<br />value:  6470.763","date: 1992-07-01<br />value:  6566.641","date: 1992-10-01<br />value:  6680.803","date: 1993-01-01<br />value:  6729.459","date: 1993-04-01<br />value:  6808.939","date: 1993-07-01<br />value:  6882.098","date: 1993-10-01<br />value:  7013.738","date: 1994-01-01<br />value:  7115.652","date: 1994-04-01<br />value:  7246.931","date: 1994-07-01<br />value:  7331.075","date: 1994-10-01<br />value:  7455.288","date: 1995-01-01<br />value:  7522.289","date: 1995-04-01<br />value:  7580.997","date: 1995-07-01<br />value:  7683.125","date: 1995-10-01<br />value:  7772.586","date: 1996-01-01<br />value:  7868.468","date: 1996-04-01<br />value:  8032.840","date: 1996-07-01<br />value:  8131.408","date: 1996-10-01<br />value:  8259.771","date: 1997-01-01<br />value:  8362.655","date: 1997-04-01<br />value:  8518.825","date: 1997-07-01<br />value:  8662.823","date: 1997-10-01<br />value:  8765.907","date: 1998-01-01<br />value:  8866.480","date: 1998-04-01<br />value:  8969.699","date: 1998-07-01<br />value:  9121.097","date: 1998-10-01<br />value:  9293.991","date: 1999-01-01<br />value:  9411.682","date: 1999-04-01<br />value:  9526.210","date: 1999-07-01<br />value:  9686.626","date: 1999-10-01<br />value:  9900.169","date: 2000-01-01<br />value: 10002.179","date: 2000-04-01<br />value: 10247.720","date: 2000-07-01<br />value: 10318.165","date: 2000-10-01<br />value: 10435.744","date: 2001-01-01<br />value: 10470.231","date: 2001-04-01<br />value: 10599.000","date: 2001-07-01<br />value: 10598.020","date: 2001-10-01<br />value: 10660.465","date: 2002-01-01<br />value: 10783.500","date: 2002-04-01<br />value: 10887.460","date: 2002-07-01<br />value: 10984.040","date: 2002-10-01<br />value: 11061.433","date: 2003-01-01<br />value: 11174.129","date: 2003-04-01<br />value: 11312.766","date: 2003-07-01<br />value: 11566.669","date: 2003-10-01<br />value: 11772.234","date: 2004-01-01<br />value: 11923.447","date: 2004-04-01<br />value: 12112.815","date: 2004-07-01<br />value: 12305.307","date: 2004-10-01<br />value: 12527.214","date: 2005-01-01<br />value: 12767.286","date: 2005-04-01<br />value: 12922.656","date: 2005-07-01<br />value: 13142.642","date: 2005-10-01<br />value: 13324.204","date: 2006-01-01<br />value: 13599.160","date: 2006-04-01<br />value: 13753.424","date: 2006-07-01<br />value: 13870.188","date: 2006-10-01<br />value: 14039.560","date: 2007-01-01<br />value: 14215.651","date: 2007-04-01<br />value: 14402.082","date: 2007-07-01<br />value: 14564.117","date: 2007-10-01<br />value: 14715.058","date: 2008-01-01<br />value: 14706.538","date: 2008-04-01<br />value: 14865.701","date: 2008-07-01<br />value: 14898.999","date: 2008-10-01<br />value: 14608.209","date: 2009-01-01<br />value: 14430.902","date: 2009-04-01<br />value: 14381.236","date: 2009-07-01<br />value: 14448.882","date: 2009-10-01<br />value: 14651.249","date: 2010-01-01<br />value: 14764.610","date: 2010-04-01<br />value: 14980.193","date: 2010-07-01<br />value: 15141.607","date: 2010-10-01<br />value: 15309.474","date: 2011-01-01<br />value: 15351.448","date: 2011-04-01<br />value: 15557.539","date: 2011-07-01<br />value: 15647.680","date: 2011-10-01<br />value: 15842.259","date: 2012-01-01<br />value: 16068.805","date: 2012-04-01<br />value: 16207.115","date: 2012-07-01<br />value: 16319.541","date: 2012-10-01<br />value: 16420.419","date: 2013-01-01<br />value: 16648.189","date: 2013-04-01<br />value: 16728.687","date: 2013-07-01<br />value: 16953.838","date: 2013-10-01<br />value: 17192.019","date: 2014-01-01<br />value: 17197.738","date: 2014-04-01<br />value: 17518.508","date: 2014-07-01<br />value: 17804.228","date: 2014-10-01<br />value: 17912.079","date: 2015-01-01<br />value: 18063.529","date: 2015-04-01<br />value: 18279.784","date: 2015-07-01<br />value: 18401.626","date: 2015-10-01<br />value: 18435.137","date: 2016-01-01<br />value: 18525.933","date: 2016-04-01<br />value: 18711.702","date: 2016-07-01<br />value: 18892.639","date: 2016-10-01<br />value: 19089.379","date: 2017-01-01<br />value: 19280.084","date: 2017-04-01<br />value: 19438.643","date: 2017-07-01<br />value: 19692.595","date: 2017-10-01<br />value: 20037.088","date: 2018-01-01<br />value: 20328.553","date: 2018-04-01<br />value: 20580.912","date: 2018-07-01<br />value: 20798.730","date: 2018-10-01<br />value: 20917.867","date: 2019-01-01<br />value: 21111.600","date: 2019-04-01<br />value: 21397.938","date: 2019-07-01<br />value: 21717.171","date: 2019-10-01<br />value: 21933.217","date: 2020-01-01<br />value: 21727.657","date: 2020-04-01<br />value: 19935.444","date: 2020-07-01<br />value: 21684.551","date: 2020-10-01<br />value: 22068.767","date: 2021-01-01<br />value: 22656.793","date: 2021-04-01<br />value: 23368.861","date: 2021-07-01<br />value: 23921.991","date: 2021-10-01<br />value: 24777.038","date: 2022-01-01<br />value: 25215.491","date: 2022-04-01<br />value: 25805.791","date: 2022-07-01<br />value: 26272.011","date: 2022-10-01<br />value: 26734.277","date: 2023-01-01<br />value: 27164.359","date: 2023-04-01<br />value: 27453.815","date: 2023-07-01<br />value: 27967.697","date: 2023-10-01<br />value: 28296.967","date: 2024-01-01<br />value: 28624.069","date: 2024-04-01<br />value: 29016.714","date: 2024-07-01<br />value: 29374.914","date: 2024-10-01<br />value: 29723.864","date: 2025-01-01<br />value: 29962.047","date: 2025-04-01<br />value: 30331.117"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(179,179,179,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-8401,-8311,-8220,-8128,-8036,-7945,-7854,-7762,-7670,-7580,-7489,-7397,-7305,-7215,-7124,-7032,-6940,-6850,-6759,-6667,-6575,-6484,-6393,-6301,-6209,-6119,-6028,-5936,-5844,-5754,-5663,-5571,-5479,-5389,-5298,-5206,-5114,-5023,-4932,-4840,-4748,-4658,-4567,-4475,-4383,-4293,-4202,-4110,-4018,-3928,-3837,-3745,-3653,-3562,-3471,-3379,-3287,-3197,-3106,-3014,-2922,-2832,-2741,-2649,-2557,-2467,-2376,-2284,-2192,-2101,-2010,-1918,-1826,-1736,-1645,-1553,-1461,-1371,-1280,-1188,-1096,-1006,-915,-823,-731,-640,-549,-457,-365,-275,-184,-92,0,90,181,273,365,455,546,638,730,821,912,1004,1096,1186,1277,1369,1461,1551,1642,1734,1826,1916,2007,2099,2191,2282,2373,2465,2557,2647,2738,2830,2922,3012,3103,3195,3287,3377,3468,3560,3652,3743,3834,3926,4018,4108,4199,4291,4383,4473,4564,4656,4748,4838,4929,5021,5113,5204,5295,5387,5479,5569,5660,5752,5844,5934,6025,6117,6209,6299,6390,6482,6574,6665,6756,6848,6940,7030,7121,7213,7305,7395,7486,7578,7670,7760,7851,7943,8035,8126,8217,8309,8401,8491,8582,8674,8766,8856,8947,9039,9131,9221,9312,9404,9496,9587,9678,9770,9862,9952,10043,10135,10227,10317,10408,10500,10592,10682,10773,10865,10957,11048,11139,11231,11323,11413,11504,11596,11688,11778,11869,11961,12053,12143,12234,12326,12418,12509,12600,12692,12784,12874,12965,13057,13149,13239,13330,13422,13514,13604,13695,13787,13879,13970,14061,14153,14245,14335,14426,14518,14610,14700,14791,14883,14975,15065,15156,15248,15340,15431,15522,15614,15706,15796,15887,15979,16071,16161,16252,16344,16436,16526,16617,16709,16801,16892,16983,17075,17167,17257,17348,17440,17532,17622,17713,17805,17897,17987,18078,18170,18262,18353,18444,18536,18628,18718,18809,18901,18993,19083,19174,19266,19358,19448,19539,19631,19723,19814,19905,19997,20089,20179],"y":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,346.52382499999999,352.18919999999997,357.84062499999999,363.58824999999996,368.96622500000001,374.01117499999998,378.99644999999998,384.16257499999995,389.64229999999998,395.5247,401.80724999999995,408.11087499999996,414.56020000000001,421.10569999999996,427.37312499999996,433.30939999999998,438.81569999999999,444.04115000000002,449.32752499999998,454.73450000000003,460.34534999999994,466.20017500000006,472.18357500000002,478.21672499999994,484.00342499999999,489.84572499999996,495.79579999999999,502.12762499999997,508.82682499999999,515.93875000000003,523.25257499999998,530.77845000000002,538.218075,545.83600000000001,553.55247499999996,561.53002500000002,569.89914999999996,578.7988499999999,587.77312499999994,596.98429999999996,606.30527499999994,615.66504999999995,625.08899999999994,634.732575,644.89695000000006,655.94312500000001,667.50227500000005,679.12687500000004,690.83875,702.91392500000006,715.07309999999995,727.69614999999999,740.43482500000005,753.14862500000004,766.30599999999993,779.81737499999997,793.52764999999999,808.28109999999992,823.29925000000003,838.54952500000002,853.79164999999989,869.70655000000011,886.35662500000001,903.39509999999996,921.3107,940.20614999999998,959.80952500000001,979.54437500000006,1000.1031499999999,1020.637825,1041.9223749999999,1063.6222499999999,1086.1812500000001,1108.6394,1131.6809499999999,1155.6933750000001,1180.4427250000001,1206.0615499999999,1232.2453250000001,1258.9183250000001,1286.4425999999999,1315.0545500000001,1345.2276999999999,1376.5587,1408.629475,1440.9638,1475.896025,1512.0017250000001,1549.7247,1588.056525,1627.6122,1668.5524249999999,1710.695825,1754.1618750000002,1797.4113000000002,1841.6719000000001,1889.0956249999999,1938.8218750000001,1988.9784,2041.0517500000001,2093.3147749999998,2144.4070999999999,2196.0471750000002,2247.9410749999997,2299.7825000000003,2352.1805749999999,2406.3046000000004,2462.6881250000001,2520.6485499999999,2581.0696749999997,2643.0583000000001,2706.1639,2769.8856999999998,2835.2370000000001,2901.3128499999998,2968.2366750000001,3035.2932499999997,3102.4784250000002,3169.803625,3237.8314,3305.9152500000005,3374.2529500000005,3443.0092250000002,3512.1612749999999,3583.2543749999995,3655.0196750000005,3726.47975,3798.6743000000001,3871.7383,3946.3543749999999,4021.884775,4097.5797750000002,4173.1636250000001,4250.2350999999999,4329.3020000000006,4408.2678249999999,4483.7472250000001,4556.5215250000001,4630.6297749999994,4704.2629749999996,4778.856025,4856.0760250000003,4934.5457999999999,5014.5537750000003,5096.5098250000001,5177.9109750000007,5258.6632499999996,5338.4862249999996,5418.9620249999998,5499.1519749999998,5580.0852250000007,5661.2558499999996,5743.9242749999994,5826.2273000000005,5908.3800499999998,5990.7888499999999,6074.0011500000001,6158.0154999999995,6245.2029999999995,6333.2964750000001,6423.3500750000003,6514.3625499999998,6607.1791750000002,6701.6358749999999,6795.5837000000001,6890.4114,6984.902975,7080.8595249999998,7178.2215750000005,7275.7323000000006,7373.5759749999997,7473.3575000000001,7577.1808000000001,7680.4177500000005,7787.6100500000002,7895.186275,8005.96155,8116.8378750000002,8228.6413250000005,8338.4434000000001,8448.3415249999998,8558.8514749999995,8669.2688999999991,8779.7038750000011,8889.2196250000015,9000.3363750000008,9112.9320499999994,9230.0463249999993,9349.0087249999997,9469.2036000000007,9590.8506999999991,9715.2065000000002,9842.0046499999989,9973.1295750000008,10106.671050000001,10243.158975,10381.949425000001,10525.216725,10668.231325000001,10811.700825,10956.19555,11102.52045,11249.601875,11397.134225,11545.863000000001,11691.864449999999,11839.264500000001,11983.71205,12116.567500000001,12242.047999999999,12363.423650000001,12482.48005,12601.25705,12720.317825,12838.629649999999,12959.215700000001,13081.058950000001,13203.089375,13327.052850000002,13453.29435,13582.839199999999,13714.971825000001,13847.963200000002,13981.350725,14115.325375,14252.176874999999,14387.574900000001,14522.254125000001,14657.748749999999,14789.606025000001,14924.74835,15062.221374999999,15196.842999999999,15329.249075,15463.177275,15594.651875,15722.425200000001,15845.594524999999,15969.551475,16095.11275,16221.358225,16347.96905,16473.883074999998,16602.095024999999,16735.145775000001,16875.69615,17018.576424999999,17166.0697,17323.811150000001,17490.828600000001,17666.246149999999,17847.953375000001,18030.002574999999,18204.078750000001,18327.960025,18491.533625,18660.515950000001,18843.149574999999,19038.432625000001,19245.290400000002,19468.659875000001,19697.327024999999,19937.293924999998,20186.105674999999,20443.952125,20706.856374999999,20974.984575000002,21250.331050000001,21527.954749999997,21813.613024999999,22101.068175,22390.335325,22685.629949999999,22983.0929,23284.376225],"text":["date: 1947-01-01<br />sma:         NA","date: 1947-04-01<br />sma:         NA","date: 1947-07-01<br />sma:         NA","date: 1947-10-01<br />sma:         NA","date: 1948-01-01<br />sma:         NA","date: 1948-04-01<br />sma:         NA","date: 1948-07-01<br />sma:         NA","date: 1948-10-01<br />sma:         NA","date: 1949-01-01<br />sma:         NA","date: 1949-04-01<br />sma:         NA","date: 1949-07-01<br />sma:         NA","date: 1949-10-01<br />sma:         NA","date: 1950-01-01<br />sma:         NA","date: 1950-04-01<br />sma:         NA","date: 1950-07-01<br />sma:         NA","date: 1950-10-01<br />sma:         NA","date: 1951-01-01<br />sma:         NA","date: 1951-04-01<br />sma:         NA","date: 1951-07-01<br />sma:         NA","date: 1951-10-01<br />sma:         NA","date: 1952-01-01<br />sma:         NA","date: 1952-04-01<br />sma:         NA","date: 1952-07-01<br />sma:         NA","date: 1952-10-01<br />sma:         NA","date: 1953-01-01<br />sma:         NA","date: 1953-04-01<br />sma:         NA","date: 1953-07-01<br />sma:         NA","date: 1953-10-01<br />sma:         NA","date: 1954-01-01<br />sma:         NA","date: 1954-04-01<br />sma:         NA","date: 1954-07-01<br />sma:         NA","date: 1954-10-01<br />sma:         NA","date: 1955-01-01<br />sma:         NA","date: 1955-04-01<br />sma:         NA","date: 1955-07-01<br />sma:         NA","date: 1955-10-01<br />sma:         NA","date: 1956-01-01<br />sma:         NA","date: 1956-04-01<br />sma:         NA","date: 1956-07-01<br />sma:         NA","date: 1956-10-01<br />sma:   346.5238","date: 1957-01-01<br />sma:   352.1892","date: 1957-04-01<br />sma:   357.8406","date: 1957-07-01<br />sma:   363.5882","date: 1957-10-01<br />sma:   368.9662","date: 1958-01-01<br />sma:   374.0112","date: 1958-04-01<br />sma:   378.9964","date: 1958-07-01<br />sma:   384.1626","date: 1958-10-01<br />sma:   389.6423","date: 1959-01-01<br />sma:   395.5247","date: 1959-04-01<br />sma:   401.8072","date: 1959-07-01<br />sma:   408.1109","date: 1959-10-01<br />sma:   414.5602","date: 1960-01-01<br />sma:   421.1057","date: 1960-04-01<br />sma:   427.3731","date: 1960-07-01<br />sma:   433.3094","date: 1960-10-01<br />sma:   438.8157","date: 1961-01-01<br />sma:   444.0412","date: 1961-04-01<br />sma:   449.3275","date: 1961-07-01<br />sma:   454.7345","date: 1961-10-01<br />sma:   460.3453","date: 1962-01-01<br />sma:   466.2002","date: 1962-04-01<br />sma:   472.1836","date: 1962-07-01<br />sma:   478.2167","date: 1962-10-01<br />sma:   484.0034","date: 1963-01-01<br />sma:   489.8457","date: 1963-04-01<br />sma:   495.7958","date: 1963-07-01<br />sma:   502.1276","date: 1963-10-01<br />sma:   508.8268","date: 1964-01-01<br />sma:   515.9388","date: 1964-04-01<br />sma:   523.2526","date: 1964-07-01<br />sma:   530.7785","date: 1964-10-01<br />sma:   538.2181","date: 1965-01-01<br />sma:   545.8360","date: 1965-04-01<br />sma:   553.5525","date: 1965-07-01<br />sma:   561.5300","date: 1965-10-01<br />sma:   569.8991","date: 1966-01-01<br />sma:   578.7988","date: 1966-04-01<br />sma:   587.7731","date: 1966-07-01<br />sma:   596.9843","date: 1966-10-01<br />sma:   606.3053","date: 1967-01-01<br />sma:   615.6650","date: 1967-04-01<br />sma:   625.0890","date: 1967-07-01<br />sma:   634.7326","date: 1967-10-01<br />sma:   644.8970","date: 1968-01-01<br />sma:   655.9431","date: 1968-04-01<br />sma:   667.5023","date: 1968-07-01<br />sma:   679.1269","date: 1968-10-01<br />sma:   690.8388","date: 1969-01-01<br />sma:   702.9139","date: 1969-04-01<br />sma:   715.0731","date: 1969-07-01<br />sma:   727.6961","date: 1969-10-01<br />sma:   740.4348","date: 1970-01-01<br />sma:   753.1486","date: 1970-04-01<br />sma:   766.3060","date: 1970-07-01<br />sma:   779.8174","date: 1970-10-01<br />sma:   793.5276","date: 1971-01-01<br />sma:   808.2811","date: 1971-04-01<br />sma:   823.2993","date: 1971-07-01<br />sma:   838.5495","date: 1971-10-01<br />sma:   853.7916","date: 1972-01-01<br />sma:   869.7066","date: 1972-04-01<br />sma:   886.3566","date: 1972-07-01<br />sma:   903.3951","date: 1972-10-01<br />sma:   921.3107","date: 1973-01-01<br />sma:   940.2061","date: 1973-04-01<br />sma:   959.8095","date: 1973-07-01<br />sma:   979.5444","date: 1973-10-01<br />sma:  1000.1031","date: 1974-01-01<br />sma:  1020.6378","date: 1974-04-01<br />sma:  1041.9224","date: 1974-07-01<br />sma:  1063.6222","date: 1974-10-01<br />sma:  1086.1813","date: 1975-01-01<br />sma:  1108.6394","date: 1975-04-01<br />sma:  1131.6809","date: 1975-07-01<br />sma:  1155.6934","date: 1975-10-01<br />sma:  1180.4427","date: 1976-01-01<br />sma:  1206.0615","date: 1976-04-01<br />sma:  1232.2453","date: 1976-07-01<br />sma:  1258.9183","date: 1976-10-01<br />sma:  1286.4426","date: 1977-01-01<br />sma:  1315.0546","date: 1977-04-01<br />sma:  1345.2277","date: 1977-07-01<br />sma:  1376.5587","date: 1977-10-01<br />sma:  1408.6295","date: 1978-01-01<br />sma:  1440.9638","date: 1978-04-01<br />sma:  1475.8960","date: 1978-07-01<br />sma:  1512.0017","date: 1978-10-01<br />sma:  1549.7247","date: 1979-01-01<br />sma:  1588.0565","date: 1979-04-01<br />sma:  1627.6122","date: 1979-07-01<br />sma:  1668.5524","date: 1979-10-01<br />sma:  1710.6958","date: 1980-01-01<br />sma:  1754.1619","date: 1980-04-01<br />sma:  1797.4113","date: 1980-07-01<br />sma:  1841.6719","date: 1980-10-01<br />sma:  1889.0956","date: 1981-01-01<br />sma:  1938.8219","date: 1981-04-01<br />sma:  1988.9784","date: 1981-07-01<br />sma:  2041.0518","date: 1981-10-01<br />sma:  2093.3148","date: 1982-01-01<br />sma:  2144.4071","date: 1982-04-01<br />sma:  2196.0472","date: 1982-07-01<br />sma:  2247.9411","date: 1982-10-01<br />sma:  2299.7825","date: 1983-01-01<br />sma:  2352.1806","date: 1983-04-01<br />sma:  2406.3046","date: 1983-07-01<br />sma:  2462.6881","date: 1983-10-01<br />sma:  2520.6485","date: 1984-01-01<br />sma:  2581.0697","date: 1984-04-01<br />sma:  2643.0583","date: 1984-07-01<br />sma:  2706.1639","date: 1984-10-01<br />sma:  2769.8857","date: 1985-01-01<br />sma:  2835.2370","date: 1985-04-01<br />sma:  2901.3128","date: 1985-07-01<br />sma:  2968.2367","date: 1985-10-01<br />sma:  3035.2932","date: 1986-01-01<br />sma:  3102.4784","date: 1986-04-01<br />sma:  3169.8036","date: 1986-07-01<br />sma:  3237.8314","date: 1986-10-01<br />sma:  3305.9153","date: 1987-01-01<br />sma:  3374.2530","date: 1987-04-01<br />sma:  3443.0092","date: 1987-07-01<br />sma:  3512.1613","date: 1987-10-01<br />sma:  3583.2544","date: 1988-01-01<br />sma:  3655.0197","date: 1988-04-01<br />sma:  3726.4797","date: 1988-07-01<br />sma:  3798.6743","date: 1988-10-01<br />sma:  3871.7383","date: 1989-01-01<br />sma:  3946.3544","date: 1989-04-01<br />sma:  4021.8848","date: 1989-07-01<br />sma:  4097.5798","date: 1989-10-01<br />sma:  4173.1636","date: 1990-01-01<br />sma:  4250.2351","date: 1990-04-01<br />sma:  4329.3020","date: 1990-07-01<br />sma:  4408.2678","date: 1990-10-01<br />sma:  4483.7472","date: 1991-01-01<br />sma:  4556.5215","date: 1991-04-01<br />sma:  4630.6298","date: 1991-07-01<br />sma:  4704.2630","date: 1991-10-01<br />sma:  4778.8560","date: 1992-01-01<br />sma:  4856.0760","date: 1992-04-01<br />sma:  4934.5458","date: 1992-07-01<br />sma:  5014.5538","date: 1992-10-01<br />sma:  5096.5098","date: 1993-01-01<br />sma:  5177.9110","date: 1993-04-01<br />sma:  5258.6632","date: 1993-07-01<br />sma:  5338.4862","date: 1993-10-01<br />sma:  5418.9620","date: 1994-01-01<br />sma:  5499.1520","date: 1994-04-01<br />sma:  5580.0852","date: 1994-07-01<br />sma:  5661.2558","date: 1994-10-01<br />sma:  5743.9243","date: 1995-01-01<br />sma:  5826.2273","date: 1995-04-01<br />sma:  5908.3800","date: 1995-07-01<br />sma:  5990.7888","date: 1995-10-01<br />sma:  6074.0012","date: 1996-01-01<br />sma:  6158.0155","date: 1996-04-01<br />sma:  6245.2030","date: 1996-07-01<br />sma:  6333.2965","date: 1996-10-01<br />sma:  6423.3501","date: 1997-01-01<br />sma:  6514.3625","date: 1997-04-01<br />sma:  6607.1792","date: 1997-07-01<br />sma:  6701.6359","date: 1997-10-01<br />sma:  6795.5837","date: 1998-01-01<br />sma:  6890.4114","date: 1998-04-01<br />sma:  6984.9030","date: 1998-07-01<br />sma:  7080.8595","date: 1998-10-01<br />sma:  7178.2216","date: 1999-01-01<br />sma:  7275.7323","date: 1999-04-01<br />sma:  7373.5760","date: 1999-07-01<br />sma:  7473.3575","date: 1999-10-01<br />sma:  7577.1808","date: 2000-01-01<br />sma:  7680.4178","date: 2000-04-01<br />sma:  7787.6101","date: 2000-07-01<br />sma:  7895.1863","date: 2000-10-01<br />sma:  8005.9615","date: 2001-01-01<br />sma:  8116.8379","date: 2001-04-01<br />sma:  8228.6413","date: 2001-07-01<br />sma:  8338.4434","date: 2001-10-01<br />sma:  8448.3415","date: 2002-01-01<br />sma:  8558.8515","date: 2002-04-01<br />sma:  8669.2689","date: 2002-07-01<br />sma:  8779.7039","date: 2002-10-01<br />sma:  8889.2196","date: 2003-01-01<br />sma:  9000.3364","date: 2003-04-01<br />sma:  9112.9320","date: 2003-07-01<br />sma:  9230.0463","date: 2003-10-01<br />sma:  9349.0087","date: 2004-01-01<br />sma:  9469.2036","date: 2004-04-01<br />sma:  9590.8507","date: 2004-07-01<br />sma:  9715.2065","date: 2004-10-01<br />sma:  9842.0046","date: 2005-01-01<br />sma:  9973.1296","date: 2005-04-01<br />sma: 10106.6711","date: 2005-07-01<br />sma: 10243.1590","date: 2005-10-01<br />sma: 10381.9494","date: 2006-01-01<br />sma: 10525.2167","date: 2006-04-01<br />sma: 10668.2313","date: 2006-07-01<br />sma: 10811.7008","date: 2006-10-01<br />sma: 10956.1956","date: 2007-01-01<br />sma: 11102.5204","date: 2007-04-01<br />sma: 11249.6019","date: 2007-07-01<br />sma: 11397.1342","date: 2007-10-01<br />sma: 11545.8630","date: 2008-01-01<br />sma: 11691.8644","date: 2008-04-01<br />sma: 11839.2645","date: 2008-07-01<br />sma: 11983.7121","date: 2008-10-01<br />sma: 12116.5675","date: 2009-01-01<br />sma: 12242.0480","date: 2009-04-01<br />sma: 12363.4237","date: 2009-07-01<br />sma: 12482.4801","date: 2009-10-01<br />sma: 12601.2571","date: 2010-01-01<br />sma: 12720.3178","date: 2010-04-01<br />sma: 12838.6296","date: 2010-07-01<br />sma: 12959.2157","date: 2010-10-01<br />sma: 13081.0590","date: 2011-01-01<br />sma: 13203.0894","date: 2011-04-01<br />sma: 13327.0529","date: 2011-07-01<br />sma: 13453.2944","date: 2011-10-01<br />sma: 13582.8392","date: 2012-01-01<br />sma: 13714.9718","date: 2012-04-01<br />sma: 13847.9632","date: 2012-07-01<br />sma: 13981.3507","date: 2012-10-01<br />sma: 14115.3254","date: 2013-01-01<br />sma: 14252.1769","date: 2013-04-01<br />sma: 14387.5749","date: 2013-07-01<br />sma: 14522.2541","date: 2013-10-01<br />sma: 14657.7487","date: 2014-01-01<br />sma: 14789.6060","date: 2014-04-01<br />sma: 14924.7483","date: 2014-07-01<br />sma: 15062.2214","date: 2014-10-01<br />sma: 15196.8430","date: 2015-01-01<br />sma: 15329.2491","date: 2015-04-01<br />sma: 15463.1773","date: 2015-07-01<br />sma: 15594.6519","date: 2015-10-01<br />sma: 15722.4252","date: 2016-01-01<br />sma: 15845.5945","date: 2016-04-01<br />sma: 15969.5515","date: 2016-07-01<br />sma: 16095.1128","date: 2016-10-01<br />sma: 16221.3582","date: 2017-01-01<br />sma: 16347.9690","date: 2017-04-01<br />sma: 16473.8831","date: 2017-07-01<br />sma: 16602.0950","date: 2017-10-01<br />sma: 16735.1458","date: 2018-01-01<br />sma: 16875.6961","date: 2018-04-01<br />sma: 17018.5764","date: 2018-07-01<br />sma: 17166.0697","date: 2018-10-01<br />sma: 17323.8112","date: 2019-01-01<br />sma: 17490.8286","date: 2019-04-01<br />sma: 17666.2461","date: 2019-07-01<br />sma: 17847.9534","date: 2019-10-01<br />sma: 18030.0026","date: 2020-01-01<br />sma: 18204.0788","date: 2020-04-01<br />sma: 18327.9600","date: 2020-07-01<br />sma: 18491.5336","date: 2020-10-01<br />sma: 18660.5160","date: 2021-01-01<br />sma: 18843.1496","date: 2021-04-01<br />sma: 19038.4326","date: 2021-07-01<br />sma: 19245.2904","date: 2021-10-01<br />sma: 19468.6599","date: 2022-01-01<br />sma: 19697.3270","date: 2022-04-01<br />sma: 19937.2939","date: 2022-07-01<br />sma: 20186.1057","date: 2022-10-01<br />sma: 20443.9521","date: 2023-01-01<br />sma: 20706.8564","date: 2023-04-01<br />sma: 20974.9846","date: 2023-07-01<br />sma: 21250.3311","date: 2023-10-01<br />sma: 21527.9547","date: 2024-01-01<br />sma: 21813.6130","date: 2024-04-01<br />sma: 22101.0682","date: 2024-07-01<br />sma: 22390.3353","date: 2024-10-01<br />sma: 22685.6299","date: 2025-01-01<br />sma: 22983.0929","date: 2025-04-01<br />sma: 23284.3762"],"type":"scatter","mode":"lines","line":{"width":4.5354330708661417,"color":"rgba(178,34,34,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":51.334163553341632,"r":9.2984640929846396,"b":51.141552511415526,"l":69.738480697384816},"font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279},"title":{"text":"US GDP and 10-Year Moving Average","font":{"color":"rgba(0,0,0,1)","family":"","size":22.316313823163139},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-9830,21608],"tickmode":"array","ticktext":["1960","1980","2000","2020"],"tickvals":[-3653,3652,10957,18262],"categoryorder":"array","categoryarray":["1960","1980","2000","2020"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923198,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.877542548775427},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.8453149175440583,"zeroline":false,"anchor":"y","title":{"text":"Date","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1261.2336499999999,31835.514649999997],"tickmode":"array","ticktext":["0","10000","20000","30000"],"tickvals":[0,10000,20000,30000],"categoryorder":"array","categoryarray":["0","10000","20000","30000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923198,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.8453149175440583,"zeroline":false,"anchor":"x","title":{"text":"Billions of Dollars","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.877542548775427}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"3a3c461f2753":{"x":{},"y":{},"type":"scatter"},"3a3c51ce3b05":{"x":{},"y":{}}},"cur_data":"3a3c461f2753","visdat":{"3a3c461f2753":["function (y) ","x"],"3a3c51ce3b05":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

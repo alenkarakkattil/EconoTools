@@ -1,30 +1,15 @@
 Package: EconoTools
 Type: Package
-Title: Tools for Economic Data Analysis
+Title: Tools for Economic Analysis
 Version: 0.1.0
-Author: Alen K Suresh
-Maintainer: Alen K Suresh <alenkarakkattil4444@gmail.com>
-Description: A collection of tools to fetch, process, and visualize
-    common economic indicators from public APIs like the Federal Reserve
-    Economic Data (FRED). Includes functions for calculating moving averages
-    and an interactive Shiny application for data exploration.
-License: MIT + file LICENSE
+Authors@R: person(
+  given = "Alen",
+  family = "Suresh",
+  role = c("aut", "cre"),
+  email = "alenkarakkattil4444@gmail.com"
+)
+Description: Collection of functions to fetch, clean, and analyze economic data.
+License: MIT
+VignetteBuilder: Quarto
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
-Imports:
-    dplyr,
-    httr,
-    jsonlite,
-    magrittr,
-    zoo
-Suggests:
-    testthat (>= 3.0.0),
-    knitr,
-    rmarkdown,
-    ggplot2,
-    plotly,
-    shiny,
-    bslib
-Config/testthat/edition: 3
-VignetteBuilder: knitr
